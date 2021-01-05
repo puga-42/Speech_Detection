@@ -6,6 +6,18 @@ Defines a class to:
 '''
 
 import glob
+import eng_to_ipa as ipa
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import glob
+import os
+
+import librosa
+import librosa.display
+import soundfile as sf
+import IPython.display as ipd
+
 
 # class AudioGenerator():
 #     def __init__(self, step=10, window=20, max_freq=8000,
@@ -32,24 +44,22 @@ def get_audio_and_text_data(base_path):
 
         with open(text_files[i]) as f:
             content = f.readlines()
-            idx =  [char[:16] for char in content]
-            splits = [code.split('-') for code in idx]
-            idx = [base_path + index + '/.flacc' for index in idx]
-            text = [letter[17:-1] for letter in content]
-            text = [sentence.lower() for sentence in text]
+            idx =  [char[:16] for char in content]            
+            idx = [base_path + index[:4] + '/' + index[5:11] + '/' + index + '.flac' for index in idx]
+            # text = [letter[17:-1] for letter in content]
+            # text = [sentence.lower() for sentence in text]
+            # text = [ipa.convert(sentence) for sentence in text]
 
             #append paths and texts
             audio_paths += idx
-            texts += text
-        
+            # texts += text
+
+
+        if i%50 == 0:
+            print('text file: ', i)
+
     return audio_paths, texts
     
-def normalize(self, feature, eps=1e-14):
-    return (feature - self.feats_mean) / (self.feats_std + eps)
-
-
-
-
 
 from numpy.lib.stride_tricks import as_strided
 
@@ -135,3 +145,22 @@ def spectrogram_from_file(filename, step=10, window=20, max_freq=None,
         hop_length=hop_length)
     ind = np.where(freqs <= max_freq)[0][-1] + 1
     return np.transpose(np.log(pxx[:ind, :] + eps))
+
+
+def featurize(self, audio_clip):
+    """ For a given audio clip, calculate the log of its Fourier Transform
+    Params:
+        audio_clip(str): Path to the audio clip
+    """
+    return spectrogram_from_file(
+        audio_clip, step=self.step, window=self.window,
+        max_freq=self.max_freq)
+
+def sort_by_duration(durations, audio_paths, texts):
+    return zip(*sorted(zip(durations, audio_paths, texts)))
+
+def normalize(self, feature, eps=1e-14):
+    return (feature - self.feats_mean) / (self.feats_std + eps)
+
+
+
