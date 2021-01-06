@@ -35,6 +35,10 @@ import IPython.display as ipd
 #         """
 
 
+def calc_feat_dim(window, max_freq):
+    return int(0.001 * window * max_freq) + 1
+
+
 def get_audio_and_text_data(base_path):
     text_files = glob.glob(base_path + "/**/*.txt", recursive = True)  # get list of all text files in dir
     audio_paths, durations, texts = [], [], []
