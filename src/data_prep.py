@@ -18,6 +18,8 @@ import librosa.display
 import soundfile as sf
 import IPython.display as ipd
 
+from src.phonemes import char_map, index_map
+
 
 # class AudioGenerator():
 #     def __init__(self, step=10, window=20, max_freq=8000,
@@ -151,20 +153,29 @@ def spectrogram_from_file(filename, step=10, window=20, max_freq=None,
     return np.transpose(np.log(pxx[:ind, :] + eps))
 
 
-def featurize(self, audio_clip):
-    """ For a given audio clip, calculate the log of its Fourier Transform
-    Params:
-        audio_clip(str): Path to the audio clip
-    """
-    return spectrogram_from_file(
-        audio_clip, step=self.step, window=self.window,
-        max_freq=self.max_freq)
 
 def sort_by_duration(durations, audio_paths, texts):
     return zip(*sorted(zip(durations, audio_paths, texts)))
 
-def normalize(self, feature, eps=1e-14):
-    return (feature - self.feats_mean) / (self.feats_std + eps)
 
+
+def text_to_int_sequence(text):
+    """ Convert text to an integer sequence """
+    int_sequence = []
+    for c in text:
+        if c == ' ':
+            ch = char_map['<SPACE>']
+        else:
+            ch = char_map[c]
+        int_sequence.append(ch)
+    return int_sequence
+
+def int_sequence_to_text(int_sequence):
+    """ Convert an integer sequence to text """
+    text = []
+    for c in int_sequence:
+        ch = index_map[c]
+        text.append(ch)
+    return text
 
 
