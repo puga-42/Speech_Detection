@@ -21,20 +21,7 @@ import IPython.display as ipd
 from src.phonemes import char_map, index_map
 
 
-# class AudioGenerator():
-#     def __init__(self, step=10, window=20, max_freq=8000,
-#         minibatch_size=20, desc_file=None, spectrogram=True, max_duration=10.0, 
-#         sort_by_duration=False):
-#         """
-#         Params:
-#             step (int): Step size in milliseconds between windows (for spectrogram ONLY)
-#             window (int): FFT window size in milliseconds (for spectrogram ONLY)
-#             max_freq (int): Only FFT bins corresponding to frequencies between
-#                 [0, max_freq] are returned (for spectrogram ONLY)
-#             desc_file (str, optional): Path to a JSON-line file that contains
-#                 labels and paths to the audio files. If this is None, then
-#                 load metadata right away
-#         """
+
 
 
 def calc_feat_dim(window, max_freq):
@@ -50,8 +37,14 @@ def get_audio_and_text_data(base_path):
 
         with open(text_files[i]) as f:
             content = f.readlines()
-            idx =  [char[:16] for char in content]            
-            idx = [base_path + index[:4] + '/' + index[5:11] + '/' + index + '.flac' for index in idx]
+
+
+            idx = [string.split('-') for string in content]
+            idx = [lst[0]+'-'+lst[1]+'-'+lst[2][:4]+'.flac' for lst in idx]
+            idx = [base_path + index.split('-')[0]+ '/' + index.split('-')[1] + '/']
+
+            # idx =  [char[:16] for char in content]            
+            # idx = [base_path + index[:4] + '/' + index[5:11] + '/' + index + '.flac' for index in idx]
             # text = [letter[17:-1] for letter in content]
             # text = [sentence.lower() for sentence in text]
             # text = [ipa.convert(sentence) for sentence in text]
@@ -70,6 +63,7 @@ def get_audio_and_text_data(base_path):
 from numpy.lib.stride_tricks import as_strided
 
 def spectrogram(samples, fft_length=256, sample_rate=2, hop_length=128):
+    # print('entered spectrogram')
     """
     Compute the spectrogram for a real signal.
     The parameters follow the naming convention of
@@ -121,8 +115,9 @@ def spectrogram(samples, fft_length=256, sample_rate=2, hop_length=128):
 
     return x, freqs
 
-def spectrogram_from_file(filename, step=10, window=20, max_freq=None,
-                          eps=1e-14):
+def spectrogram_from_file(filename, step=10, window=20, max_freq=None, eps=1e-14):
+    # print('entered spectrogram_from_file')
+                    
     """ Calculate the log of linear spectrogram from FFT energy
     Params:
         filename (str): Path to the audio file
